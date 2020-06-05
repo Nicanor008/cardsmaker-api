@@ -1,0 +1,26 @@
+{
+  "scripts": {
+    "start": "NODE_ENV=production forever --minUptime 4000  app.js",
+    "dev": "NODE_ENV=development nodemon  app.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "chalk": "^4.0.0",
+    "connect-mongodb-session": "^2.3.2",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "forever": "^3.0.0",
+    "http-status": "^1.4.2",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.9.16",
+    "nodemailer": "^6.4.8",
+    "swagger-ui-express": "^4.1.4",
+    "yamljs": "^0.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}

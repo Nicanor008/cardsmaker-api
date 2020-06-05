@@ -1,0 +1,579 @@
+openapi: 3.0.0
+info:
+  version: 1.0.1
+  title: Cards Maker API documentation
+  description: Events Cards Maker API endpoints.
+servers:
+  - url: '{protocol}://{host}:{port}/'
+    description: Development server (uses test data)
+    variables:
+      port:
+        enum:
+          - ''
+          - '4000'
+          - '4001'
+        default: ''
+      protocol:
+        enum:
+          - 'http'
+          - 'https'
+        default: 'http'
+      host:
+        enum:
+          - '127.0.0.1'
+          - 'cardsmaker.herokuapp.com'
+        default: 'cardsmaker.herokuapp.com'
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        name:
+          type: String
+          example: test Username
+        email:
+          type: String
+          example: testUsername@gmail.com
+        role:
+          type: String
+          example: user
+        password:
+          type: String
+          example: AveryStrongPassword
+        active:
+          type: Boolean
+          example: true
+        verified:
+          type: Boolean
+          example: true
+
+    Card:
+      type: object
+      properties:
+        name:
+          type: String
+          example: Card Event Title
+        message:
+          type: Date
+          example: We iniviting you to our wedding event
+        useTemplate:
+          type: Boolean
+          example: false
+        border:
+          type: String
+          example: dotted
+        backgroundColor:
+          type: string
+          example: white
+        user:
+          type: ObjectID
+          example: 5eb17400111b219364f89b46
+        tags:
+          type: Array
+          example: ["wedding", "celebration"]
+    Payment:
+      type: object
+      properties:
+        amount:
+          type: String
+          example: USD 450
+        paid:
+          type: Boolean
+          example: true
+
+paths:
+  /auth/register:
+    post:
+      summary: Regiter User
+      description: Adds user to the users collection
+      tags:
+        - Users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: String
+                  example: test Username
+                email:
+                  type: String
+                  example: testUsername@gmail.com
+                role:
+                  type: String
+                  example: user
+                password:
+                  type: String
+                  example: AveryStrongPassword
+      responses:
+        201:
+          description: Account created. Check your email to activate account
+        409:
+          description: Email already  exist
+  
+  /auth/verify/{email}:
+    patch:
+      summary: Verify account
+      tags:
+        - Users
+      parameters:
+        - in: path
+          name: email
+          description: User email used to create account
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Account has been verified
+        404:
+          description: Account :email does not exist
+
+  /auth/login:
+    post:
+      summary: Login Users
+      description: authenticate users into the system
+      tags:
+        - Users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: String
+                  example: testUsername@gmail.com
+                password:
+                  type: String
+                  example: AveryStrongPassword
+      responses:
+        200:
+          description: Login successful
+        403:
+          description: Account has not been verified
+        404:
+          description: Email does not exist or Wrong password
+
+  /users:
+    get:
+      summary: Fetch all users
+      tags:
+        - Users
+      responses:
+        200:
+          description: All users
+        404: 
+          description: No Users available
+
+  /users/:id:
+    get:
+      summary: Get a single user
+      tags:
+        - Users
+      parameters:
+        - in: path
+          name: id
+          description: user id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: User Fetched successfully
+        404: 
+          description: User does not exist
+
+  /users/:id:
+     patch:
+      summary: Update an existing user
+      tags:
+        - Users
+      parameters:
+        - in: path
+          name: token
+          description: Authorization token
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: id
+          description: user id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: String
+                  example: test Username
+                email:
+                  type: String
+                  example: testUsername@gmail.com
+                active:
+                  type: Boolean
+                  example: true
+                verified:
+                  type: Boolean
+                  example: true
+      responses:
+        200:
+          description: User updated Successfully
+        403:
+          description: Unathorised, you can only update your account
+        404: 
+          description: User does not exist
+  
+  /users/:email:
+     patch:
+      summary: Reset Password
+      tags:
+        - Users
+      parameters:
+        - in: path
+          name: token
+          description: Authorization token
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: email
+          description: registered user email address
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: StrmyVeryStrongPassword
+      responses:
+        200:
+          description: Password Has been reset
+        403:
+          description: Unathorised, you can only update your account
+        404: 
+          description: User does not exist
+
+  /users/deactivate/:id:
+     patch:
+      summary: Deactivate my user account
+      tags:
+        - Users
+      parameters:
+        - in: path
+          name: token
+          description: Authorization token
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: id
+          description: user id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Account has been deactivated
+        403:
+          description: Unathorised, you can only update your account
+        404: 
+          description: User does not exist
+  
+  /users/:id:
+     delete:
+      summary: Delete my user account
+      tags:
+        - Users
+      parameters:
+        - in: path
+          name: token
+          description: Authorization token
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: id
+          description: user id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Account has been deleted
+        403:
+          description: Unathorised, you can only update your account
+        404: 
+          description: User does not exist
+
+  /cards:
+    post:
+      summary: Create a new event Card
+      tags:
+        - Card
+      parameters:
+        - in: path
+          name: token
+          description: Authorization token
+          required: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: String
+                  example: Card Event Title
+                message:
+                  type: Date
+                  example: We iniviting you to our wedding event
+                useTemplate:
+                  type: Boolean
+                  example: false
+                border:
+                  type: String
+                  example: dotted
+                backgroundColor:
+                  type: string
+                  example: white
+                user:
+                  type: ObjectID
+                  example: 5eb17400111b219364f89b46
+                tags:
+                  type: Array
+                  example: ["wedding", "celebration"]
+
+      responses:
+        200:
+          description: Event has been created
+        401:
+          description: Unauthorised, you must login to continue
+  
+  /cards:
+    get:
+      summary: Fetch all event cards
+      tags:
+        - Card
+      responses:
+        200:
+          description: All Events Cards
+        404: 
+          description: No Event Cards available
+  
+  /cards/user/all:
+    get:
+      summary: Fetch all user cards
+      tags:
+        - Card
+      parameters:
+        - in: path
+          name: token
+          description: Authorization token
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: User Events
+        401:
+          description: Unauthorised, you must login to continue
+        404: 
+          description: User Does not have any events
+
+  /cards/:id:
+    get:
+      summary: Fetch single event card
+      tags:
+        - Card
+      parameters:
+        - in: path
+          name: id
+          description: Card item id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Single Event Card
+        404: 
+          description: You don't have any card events
+  
+  /cards/tags/:tag:
+    get:
+      summary: Get/Search all card events for specific tag
+      tags:
+        - Card
+      parameters:
+        - in: path
+          name: tag
+          description: event card tag
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description:  Event with tag ${tag}
+        404: 
+          description: No Events Cards with tag ${tag}
+        
+  /cards/:id:
+    patch:
+      summary: Update User Event
+      tags:
+        - Card
+      parameters:
+        - in: path
+          name: token
+          description: Authorization token
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: id
+          description: Card item id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: String
+                  example: Card Event Title
+                message:
+                  type: Date
+                  example: We iniviting you to our wedding event
+                useTemplate:
+                  type: Boolean
+                  example: false
+                border:
+                  type: String
+                  example: dotted
+                backgroundColor:
+                  type: string
+                  example: white
+                tags:
+                  type: Array
+                  example: ["Birthday", "party"]
+      responses:
+        200:
+          description: Event Updated Successfully
+        404: 
+          description: Event does not exists or your not the author
+
+  /cards/:id:
+    delete:
+      summary: Delete User Event Card
+      tags:
+        - Card
+      parameters:
+        - in: path
+          name: token
+          description: Authorization token
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: id
+          description: Card item id
+          required: true
+          schema:
+            type: string
+      responses:
+        200: description: Event Card has been Deleted Successfully
+
+  /cards/user/all:
+    delete:
+      summary: Delete All User Events' Cards
+      tags:
+        - Card
+      parameters:
+        - in: path
+          name: token
+          description: Authorization token
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description:  Todo has been archived
+        404: 
+          description: Todo item doesn't exists
+  
+  /cards/search/:name:
+    get:
+      summary: Search for an event by name
+      tags:
+        - Card
+      parameters:
+        - in: path
+          name: name
+          description: Event name
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description:  Todo item deleted
+        404: 
+          description: Todo item does not exist
+  
+  /payment:
+    post:
+      summary: Create a payment 
+      tags:
+        - Payment
+      parameters:
+        - in: path
+          name: token
+          description: Authorization token
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: String
+                  example: USD 450
+                paid:
+                  type: Boolean
+                  example: true
+      responses:
+        200:
+          description:  Payment transaction successful
+  
+  /payment:
+    get:
+      summary: Get all user payments
+      tags:
+        - Payment
+      parameters:
+        - in: path
+          name: token
+          description: Authorization token
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: User Payment
