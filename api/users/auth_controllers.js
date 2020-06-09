@@ -47,7 +47,6 @@ exports.loginUser = (req, res) => {
   const { email, password } = req.body;
   User.findOne({ email })
     .then((response) => {
-      console.log(req.session);
       if (!response) {
         return res.status(404).json({ message: "Email does not exist" });
       }
@@ -77,11 +76,12 @@ exports.loginUser = (req, res) => {
           }
           req.session.isLoggedIn = true;
           req.session.user = response._id;
-          // req.session.save();
-          return res.status(statusCode.OK).json({
-            message: "Login successful",
-            token: "Bearer " + token,
-            data: response,
+          req.session.save((err) => {
+            return res.status(statusCode.OK).json({
+              message: "Login successful",
+              token: "Bearer " + token,
+              data: response,
+            });
           });
         });
       });

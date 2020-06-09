@@ -17,13 +17,12 @@ const PORT = process.env.PORT || 4001;
 const DB_URI = process.env.DBURI;
 
 const store = new MongoDBStore({
-  uri: process.env.DB_URI,
+  uri: DB_URI,
   collection: "sessions",
 });
 app.use(cors());
 app.use(
   session({
-    httpOnly: false,
     secret: process.env.SECRET_KEY,
     resave: false,
     saveUninitialized: false,

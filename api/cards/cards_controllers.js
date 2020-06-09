@@ -36,18 +36,18 @@ exports.createCard = (req, res) => {
       } else {
         ipCount += ipIfExists.cardCount;
 
+        // if passed the limit, purchase
+        if(ipCount >= 5) {
+            return res.status(402).json({ message: 'You\'ve passed the limit, kindly purchase' })
+        }
+
         //   ip ipIfExists, update
-        IpAddress.findOneAndUpdate({ ip }, { cardCount: ipCount + 1 }).then(
+        IpAddress.findOneAndUpdate({ ip }, { $inc: {cardCount: 1}}).then(
           (updatedIp) => {
             ipCount = updatedIp + 1;
             return ipCount;
           }
         );
-
-        // if passed the limit, purchase
-        if(ipCount > 5) {
-            return res.status(402).json({ message: 'You\'ve passed the limit, kindly purchase' })
-        }
 
         //   save card
         const cards = new Card({
