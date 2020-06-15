@@ -18,7 +18,7 @@ function setup() {
 exports.sendConfirmEmail = (data) => {
   const transport = setup();
   const userEmail = data.email;
-  const generateConfirmationUrl = `http://localhost:4001/auth/verify/${userEmail}`;
+  const generateConfirmationUrl = `http://localhost:1234/verify/${userEmail}`;
 
   const msg = {
     from,
@@ -40,7 +40,7 @@ exports.sendConfirmEmail = (data) => {
 exports.emailPasswordResetLink = (data) => {
   const transport = setup();
   const userEmail = data.email;
-  const generateConfirmationUrl = `http://localhost:4001/auth/password-reset/${userEmail}`;
+  const generateConfirmationUrl = `http://localhost:1234/reset-password/${userEmail}`;
 
   const msg = {
     from,

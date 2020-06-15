@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 const emailPasswordResetLink = require("./sendMail");
 
 // register new user
-exports.registerUser = (req, res) => {
+exports.registerUser = async (req, res) => {
   const { password, email, name, role } = req.body;
   // const image = req.file;
   // const pictureUrl = image.path;

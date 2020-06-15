@@ -113,7 +113,7 @@ exports.getUserEventCards = (req, res) => {
       if (cards.length === 0) {
         return res
           .status(404)
-          .json({ message: "User Does not have any events" });
+          .json({ message: "You Haven't Created any Events yet." });
       }
       return res.status(200).json({
         message: `${
@@ -130,7 +130,7 @@ exports.getUserEventCards = (req, res) => {
 // get single events
 exports.getSingleCard = (req, res) => {
   Card.findOne({ _id: req.params.id }).then((card) => {
-    if (card.length === 0) {
+    if (!card) {
       return res.status(404).json({ message: "No Events Cards Available" });
     }
     return res.status(200).json({ message: "Single Event Card", data: card });

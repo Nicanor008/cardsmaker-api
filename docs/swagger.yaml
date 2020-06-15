@@ -391,7 +391,7 @@ paths:
         401:
           description: Unauthorised, you must login to continue
         404: 
-          description: User Does not have any events
+          description: You Haven't Created any Events yet.
 
   /cards/:id:
     get:
