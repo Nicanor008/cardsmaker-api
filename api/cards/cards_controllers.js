@@ -37,12 +37,14 @@ exports.createCard = (req, res) => {
         ipCount += ipIfExists.cardCount;
 
         // if passed the limit, purchase
-        if(ipCount >= 5) {
-            return res.status(402).json({ message: 'You\'ve passed the limit, kindly purchase' })
+        if (ipCount >= 5) {
+          return res
+            .status(402)
+            .json({ message: "You've passed the limit, kindly purchase" });
         }
 
         //   ip ipIfExists, update
-        IpAddress.findOneAndUpdate({ ip }, { $inc: {cardCount: 1}}).then(
+        IpAddress.findOneAndUpdate({ ip }, { $inc: { cardCount: 1 } }).then(
           (updatedIp) => {
             ipCount = updatedIp + 1;
             return ipCount;
@@ -78,9 +80,7 @@ exports.getAllEventsCards = (req, res) => {
         return res.status(404).json({ message: "No Event Cards available" });
       }
       return res.status(200).json({
-        message: `${
-          cards.length > 1 ? `All Events Cards` : `Event Card`
-        }`,
+        message: `${cards.length > 1 ? `All Events Cards` : `Event Card`}`,
         data: cards,
       });
     });
@@ -152,6 +152,11 @@ exports.viewCardsTags = (req, res) => {
       return res
         .status(200)
         .json({ message: `Event with tag ${tag}`, data: cards });
+    })
+    .catch((error) => {
+      return res
+        .status(500)
+        .json({ message: `Server Error occurred. Try again`, error });
     });
 };
 
@@ -211,15 +216,21 @@ exports.deleteAllUserEventCards = (req, res) => {
 exports.searchEventCard = (req, res) => {
   const { name } = req.params;
   //   const me = checkIp.createIpAddress()
-  Card.find({ name: { $regex: name } }).then((card) => {
-    if (card.length === 0) {
+  Card.find({ name: { $regex: name } })
+    .then((card) => {
+      if (card.length === 0) {
+        return res
+          .status(404)
+          .json({ message: `No Event Card with the name ${name}` });
+      }
+      return res.status(200).json({
+        message: `${card.length} ${card.length > 1 ? `Events` : `Event`} found`,
+        data: card,
+      });
+    })
+    .catch((error) => {
       return res
-        .status(404)
-        .json({ message: `No Event Card with the name ${name}` });
-    }
-    return res.status(200).json({
-      message: `${card.length} ${card.length > 1 ? `Events` : `Event`} found`,
-      data: card,
+        .status(500)
+        .json({ message: "Server Error Occurred. Try again", error });
     });
-  });
 };
