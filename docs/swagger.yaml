@@ -85,7 +85,7 @@ components:
 paths:
   /auth/register:
     post:
-      summary: Regiter User
+      summary: Register User
       description: Adds user to the users collection
       tags:
         - Users
@@ -355,16 +355,14 @@ paths:
                 tags:
                   type: Array
                   example: ["wedding", "celebration"]
-
       responses:
         200:
           description: Event has been created
         401:
-          description: Unauthorised, you must login to continue
-  
+          description: Unauthorized, you must login to continue
   /cards:
     get:
-      summary: Fetch all event cards
+      summary: Fetch all event cards in DB
       tags:
         - Card
       responses:
@@ -389,7 +387,7 @@ paths:
         200:
           description: User Events
         401:
-          description: Unauthorised, you must login to continue
+          description: Unauthorized, you must login to continue
         404: 
           description: You Haven't Created any Events yet.
 

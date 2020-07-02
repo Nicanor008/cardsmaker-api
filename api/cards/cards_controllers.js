@@ -12,7 +12,7 @@ exports.createCard = (req, res) => {
     border,
     useTemplate,
     isPublic,
-    tags,
+    tags, eventDate, eventTime
   } = req.body;
   name = name.toLowerCase();
   if (!name && !message) {
@@ -60,7 +60,7 @@ exports.createCard = (req, res) => {
           user: req.id,
           useTemplate,
           isPublic,
-          tags,
+          tags, eventDate, eventTime
         });
         cards.save().then((card) => {
           return res
@@ -73,17 +73,32 @@ exports.createCard = (req, res) => {
 };
 // fetch all events cards in the DB
 exports.getAllEventsCards = (req, res) => {
-  Card.find()
-    .sort({ creadAt: 1 })
-    .then((cards) => {
-      if (cards.length === 0) {
-        return res.status(404).json({ message: "No Event Cards available" });
-      }
-      return res.status(200).json({
-        message: `${cards.length > 1 ? `All Events Cards` : `Event Card`}`,
-        data: cards,
-      });
+  Card.aggregate([
+    {
+      $sort: {
+        createdAt: -1,
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "user",
+        foreignField: "_id",
+        as: "user",
+      },
+    },
+    {
+      $unwind: "$user",
+    },
+  ]).then((cards) => {
+    if (cards.length === 0) {
+      return res.status(404).json({ message: "No Event Cards available" });
+    }
+    return res.status(200).json({
+      message: `${cards.length > 1 ? `All Events Cards` : `Event Card`}`,
+      data: cards,
     });
+  });
 };
 
 // view all users cards

@@ -38,6 +38,11 @@ const cardsSchema = new Schema(
       ref: 'IpAddress',
       required: false
     },
+    eventDate: {
+      type: String,
+      // type: Date,
+    },
+    eventTime: { type: String },
   },
   { timestamps: true }
 );
