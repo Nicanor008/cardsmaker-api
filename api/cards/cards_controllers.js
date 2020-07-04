@@ -12,7 +12,7 @@ exports.createCard = (req, res) => {
     border,
     useTemplate,
     isPublic,
-    tags, eventDate, eventTime
+    tags, eventDateTime
   } = req.body;
   name = name.toLowerCase();
   if (!name && !message) {
@@ -60,13 +60,16 @@ exports.createCard = (req, res) => {
           user: req.id,
           useTemplate,
           isPublic,
-          tags, eventDate, eventTime
+          tags, eventDateTime
         });
         cards.save().then((card) => {
           return res
             .status(200)
             .json({ message: "Event has been created", data: card });
-        });
+        }).catch(err => {
+          console.log(err)
+          return res.status(500).json({ message: 'Something went wrong. Try again', error: err })
+        })
       }
     });
   });
@@ -249,3 +252,8 @@ exports.searchEventCard = (req, res) => {
         .json({ message: "Server Error Occurred. Try again", error });
     });
 };
+
+// view all archived/past events
+exports.viewAllArchivedCards = (req, res) => {
+
+}
