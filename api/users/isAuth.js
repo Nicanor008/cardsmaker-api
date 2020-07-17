@@ -5,7 +5,7 @@ module.exports = (req, res, next) => {
   if(!authHeader) {
     return res
     .status(401)
-    .json({ message: "yo0000u must login to continue" });
+    .json({ message: "you must login to continue" });
   }
   const token = authHeader.split(" ")[1];
   let decodedToken;

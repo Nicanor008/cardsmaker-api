@@ -6,16 +6,19 @@ const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
 const cors = require("cors");
 const multer = require("multer");
+const passport = require("passport");
 
 const path = require("path");
 
 const routes = require("./api/");
 
+const passportSetup = require("./api/users/passport");
+
 const app = express();
 
 dotenv.config();
 
-const PORT = process.env.PORT || 4001;
+const PORT = process.env.PORT || 4000;
 const DB_URI = process.env.DBURI;
 
 const store = new MongoDBStore({
@@ -56,6 +59,11 @@ const fileFilter = (req, file, cb) => {
     cb(null, false);
   }
 };
+
+// initialize passport
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use(
   multer({ storage: fileStorage, fileFilter: fileFilter }).single("image")
 );

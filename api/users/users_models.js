@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
+function getRandomInt(max) {
+  return Math.floor(Math.random() * 10000);
+}
+
 const userSchema = new Schema(
   {
     name: {
@@ -19,7 +23,13 @@ const userSchema = new Schema(
     },
     password: {
         type: String,
-        required: true
+        required: false, // in case of google oauth
+        default: getRandomInt(1)
+    },
+    defaultPassword: {
+      type: Boolean,
+      required: true,
+      default: false
     },
     active: {
       type: Boolean,
@@ -34,7 +44,8 @@ const userSchema = new Schema(
     pictureUrl: {
         type: String,
         required: false
-    }
+    },
+    googleId: String,
   },
   { timestamps: true }
 );

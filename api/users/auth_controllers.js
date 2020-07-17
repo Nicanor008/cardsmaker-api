@@ -10,7 +10,7 @@ exports.registerUser = async (req, res) => {
   const { password, email, name, role } = req.body;
   // const image = req.file;
   // const pictureUrl = image.path;
-  User.findOne({ email }).then((userExists) => {
+  await User.findOne({ email }).then((userExists) => {
     if (userExists) {
       return res
         .status(statusCode.CONFLICT)
@@ -27,8 +27,8 @@ exports.registerUser = async (req, res) => {
         });
         return user.save();
       })
-      .then((response) => {
-        sendMail.sendConfirmEmail(response);
+      .then(async (response) => {
+        await sendMail.sendConfirmEmail(response);
         return res.status(statusCode.OK).json({
           messages: "Account created. Check your email to activate account",
           data: response,
@@ -51,7 +51,7 @@ exports.loginUser = (req, res) => {
         return res.status(404).json({ message: "Email does not exist" });
       }
       if (!response.active) {
-        return res.status(404).json({ message: "Email does not exist" });
+        return res.status(404).json({ message: "Account is not Activated. Click on Recover account." });
       }
       if (!response.verified) {
         return res

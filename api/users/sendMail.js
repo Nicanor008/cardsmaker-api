@@ -1,24 +1,25 @@
 const nodemailer = require("nodemailer");
 
-const from = '"CardsMaker" <cardsmaker.com>';
+const from = '"CardsMaker" <shomancodes@gmail.com>';
 
 function setup() {
   return nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 587,
-    secure: false,
     service: "Gmail",
+    sendmail: true,
     auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASSWORD,
+      user: "shomancodes@gmail.com",
+      pass: "ShomanCodes@2020",
     },
+    force: true,
   });
 }
 
-exports.sendConfirmEmail = (data) => {
+exports.sendConfirmEmail = async (data) => {
   const transport = setup();
   const userEmail = data.email;
-  const generateConfirmationUrl = `http://localhost:1234/verify/${userEmail}`;
+  const generateConfirmationUrl = `https://todo.reachlyonline.com/verify/${userEmail}`;
 
   const msg = {
     from,
@@ -33,15 +34,25 @@ exports.sendConfirmEmail = (data) => {
          🎊 🎉 🚀</p>
     `,
   };
-  transport.sendMail(msg);
+
+  transport.sendMail(msg).then(res => {
+    console.log(res)
+  });
+
+  await transport.sendMail(msg, function(error, info) {
+    if(error) {
+        console.log(data.email, 'Email couldnt be sent.\n', error.response);
+    } else {
+        console.log(data.email, 'Email sent: ' + info.response);
+    }
+  })
 };
 
 // password reset
 exports.emailPasswordResetLink = (data) => {
   const transport = setup();
   const userEmail = data.email;
-  const generateConfirmationUrl = `http://localhost:1234/reset-password/${userEmail}`;
-
+  const generateConfirmationUrl = `http://todo.reachlyonline.com/reset-password/${userEmail}`;
   const msg = {
     from,
     to: userEmail,
