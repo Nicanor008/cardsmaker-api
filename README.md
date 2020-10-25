@@ -8,4 +8,6 @@
 
 ## RoadMap
 [Cards Maker Map](https://mm.tt/1476175414?t=P60NyMDd2G)
-**
+
+## License
+[MIT License](./LICENSE)
